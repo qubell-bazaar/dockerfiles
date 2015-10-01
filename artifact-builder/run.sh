@@ -11,8 +11,8 @@ else
 fi
 git rev-parse HEAD
 
-rm -f /source/$WAR_PATH 
+rm -f /source/$PUBLISH_PATH 
 
-mvn -DskipTests=true clean package 1>&2 && cp `find target -name '*.war'` /source/$WAR_PATH
+mvn -DskipTests=true clean package 1>&2 && cp `find target -name "$ARTIFACT_PATTERN"` /source/$PUBLISH_PATH
 
 python -mSimpleHTTPServer 80

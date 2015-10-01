@@ -13,6 +13,8 @@ VOLUME /source
 WORKDIR /source
 
 ENV MAVEN_HOME /usr/share/maven
+ENV ARTIFACT_PATTERN "*.war"
+ENV PUBLISH_PATH application.war
 
 ADD run.sh /run.sh
 
