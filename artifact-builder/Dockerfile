@@ -18,4 +18,6 @@ ENV PUBLISH_PATH application.war
 
 ADD run.sh /run.sh
 
+EXPOSE 80
+
 CMD /run.sh
