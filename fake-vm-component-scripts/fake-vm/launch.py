@@ -33,7 +33,6 @@ for (vm, instance_id) in instances:
 result = {
     'instances': {
         vm.vmid: {
-            'name': vm.name,
             'instanceId': instance_id,  # pass instance for correlation
             'status': {
                 'flags': {'active': True, 'converging': False, 'failed': False}
