@@ -25,7 +25,8 @@ for vmid in ids:
         interfaces = {
             'info': {
                 'signals': {
-                    'vmid': vmid
+                    'vmid': vmid,
+                    'color': vm.color,
                 }
             }
         }
@@ -35,10 +36,26 @@ for vmid in ids:
 
         if 'login' in vm.model:
             interfaces['info']['signals']['login'] = vm.model['login']
-        
+
+        components = {}
+        if 'links' in vm.model:
+            for color, linked_fvms in vm.model['links'].items():
+                # color will map to group name in the tree
+                components[color] = {'children': {}}
+                for linked_id in linked_fvms:
+                    components[color]['children'] = {
+                        linked_id: {  # linked_id will map to component name in the tree
+                            'reference': {
+                                'type': "{}-vms".format(color),
+                                'id': linked_id
+                            }
+                        }
+                    }
+
         vm_infos[vmid] = {
             'status': status,
-            'interfaces': interfaces
+            'interfaces': interfaces,
+            'components': components,
         }
     else:
         # a vm is absent, set its status to destroyed

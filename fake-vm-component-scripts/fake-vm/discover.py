@@ -4,7 +4,14 @@ import sys
 import yaml
 import fvm
 
+arguments = yaml.safe_load(sys.stdin)
+
+color = (arguments or {}).get('configuration', {}).get('configuration.color')
+
 vms = fvm.load_fake_vms()
+
+if color:
+    vms = [vm for vm in vms if vm.color == color]
 
 def get_model(vm):
     if vm.name:
@@ -13,7 +20,8 @@ def get_model(vm):
             'interfaces': {
                 'info': {
                     'signals': {
-                        'vmid': vm.vmid
+                        'vmid': vm.vmid,
+                        'color': vm.color,
                     }
                 }
             }

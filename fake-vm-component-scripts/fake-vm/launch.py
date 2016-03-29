@@ -25,6 +25,11 @@ for (instance_id, params) in arguments.get('launch-instances', {}).items():
     # merge instance configuration
     model.update(fix_config_keys(params.get('configuration', {}).items()))
 
+    # we now need color on each VM
+    if not 'color' in model:
+        print("Instance {} has no color".format(instance_id), file=sys.stderr)
+        sys.exit(1)
+
     instances.append((fvm.FakeVm(vmid, model), instance_id))
 
 for (vm, instance_id) in instances:

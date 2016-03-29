@@ -23,8 +23,20 @@ class FakeVm:
     def name(self):
         del self.model['name']
 
+    @property
+    def color(self):
+        return self.model.get('color')
+
+    @color.setter
+    def color(self, value):
+        self.model['color'] = value
+
+    @color.deleter
+    def color(self):
+        del self.model['color']
+
     def __str__(self):
-        return "FakeVm({}, {})".format(self.vmid, self.name)
+        return "FakeVm({}, {}, {})".format(self.vmid, self.color, self.name)
 
     def __repr__(self):
         return str(self)
