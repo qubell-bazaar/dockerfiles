@@ -10,25 +10,30 @@ arguments = yaml.safe_load(sys.stdin)
 
 instances = []
 
-def fix_config_keys(source):
-    for k, v in source:
-        yield (k, v) if '.' not in k else (k.split('.')[1], v)
+config_keys = {
+    k: k.split('.')[1] for k in {
+        'configuration.name',
+        'configuration.address',
+        'configuration.login',
+        'configuration.failure',
+    }
+}
 
 for (instance_id, params) in arguments.get('launch-instances', {}).items():
     model = {}
 
-    vmid = fvm.generate_id()  # generate a fresh id
+    # merge factory and instance configurations
+    joined_config = dict(arguments.get('configuration', {}), **params.get('configuration'))
+    final_config = {
+        config_keys[k]: v for k, v in joined_config.items() if k in config_keys
+    }
 
-    # merge default configuration
-    model.update(fix_config_keys(arguments.get('configuration', {}).items()))
+    model.update(final_config)
 
-    # merge instance configuration
-    model.update(fix_config_keys(params.get('configuration', {}).items()))
-
-    instances.append((fvm.FakeVm(vmid, model), instance_id))
+    instances.append((fvm.FakeVm(None, model), instance_id))
 
 for (vm, instance_id) in instances:
-    fvm.save_fake_vm(vm)
+    fvm.save(vm)
 
 result = {
     'instances': {

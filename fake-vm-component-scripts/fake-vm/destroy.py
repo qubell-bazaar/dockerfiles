@@ -2,19 +2,24 @@
 
 import sys
 import yaml
+
 import fvm
 
 arguments = yaml.safe_load(sys.stdin)
 
 vm_ids = list(arguments.get('instances', {}).keys())
 
+errors = False
 for vmid in vm_ids:
-    if not fvm.fake_vm_exists(vmid):
+    if not fvm.exists(vmid):
         print("Fake VM {} does not exist".format(vmid), file=sys.stderr)
-        sys.exit(1)
+        errors = True
+
+if errors:
+    sys.exit(1)
 
 for vmid in vm_ids:
-    fvm.destroy_fake_vm(vmid)
+    fvm.delete(vmid)
 
 result = {
     'instances': {

@@ -8,7 +8,7 @@ directory = "/vms"
 
 class FakeVm:
     def __init__(self, vmid, model):
-        self.vmid = vmid
+        self.vmid = vmid or generate_id()
         self.model = model
 
     @property
@@ -29,7 +29,7 @@ class FakeVm:
     def __repr__(self):
         return str(self)
 
-def load_fake_vm(vmid):
+def load(vmid):
     fpath = os.path.join(directory, vmid)
     if os.path.exists(fpath):
         with open(fpath, "r") as f:
@@ -37,15 +37,15 @@ def load_fake_vm(vmid):
     else:
         return None
 
-def load_fake_vms():
+def load_all():
     results = []
     for f in os.listdir(directory):
         fpath = os.path.join(directory, f)
         if os.path.isfile(fpath):
-            results.append(load_fake_vm(f))
+            results.append(load(f))
     return results
 
-def load_fake_vm_ids():
+def load_ids():
     results = []
     for f in os.listdir(directory):
         fpath = os.path.join(directory, f)
@@ -53,15 +53,15 @@ def load_fake_vm_ids():
             results.append(f)
     return results
 
-def fake_vm_exists(vmid):
+def exists(vmid):
     return os.path.isfile(os.path.join(directory, vmid))
 
-def save_fake_vm(vm):
+def save(vm):
     fpath = os.path.join(directory, vm.vmid)
     with open(fpath, "w") as f:
         yaml.safe_dump(vm.model, f)
 
-def destroy_fake_vm(vmid):
+def delete(vmid):
     fpath = os.path.join(directory, vmid)
     os.remove(fpath)
 

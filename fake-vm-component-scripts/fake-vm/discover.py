@@ -2,9 +2,10 @@
 
 import sys
 import yaml
+
 import fvm
 
-vms = fvm.load_fake_vms()
+vms = fvm.load_all()
 
 def get_model(vm):
     if vm.name:

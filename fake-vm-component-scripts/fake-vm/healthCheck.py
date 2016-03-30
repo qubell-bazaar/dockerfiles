@@ -2,15 +2,26 @@
 
 import sys
 import yaml
+
 import fvm
+import fvol
+
+from collections import defaultdict
+from yaml.representer import SafeRepresenter
+
+# to serialize defaultdicts normally
+SafeRepresenter.add_representer(defaultdict, SafeRepresenter.represent_dict)
 
 arguments = yaml.safe_load(sys.stdin)
 
 ids = list(arguments.get('instances', {}).keys())
 
+def multidict():
+    return defaultdict(multidict)
+
 vm_infos = {}
 for vmid in ids:
-    vm = fvm.load_fake_vm(vmid)
+    vm = fvm.load(vmid)
     if vm:
         status = {
             'flags': {
@@ -35,10 +46,23 @@ for vmid in ids:
 
         if 'login' in vm.model:
             interfaces['info']['signals']['login'] = vm.model['login']
+
+        components = multidict()
+        if 'volumes' in vm.model:
+            for volid in vm.model['volumes']:
+                vol = fvol.load(volid)
+                color = vol.color if vol else 'unknown'
+                components[color]['children'][volid] = {
+                    'reference': {
+                        'type': 'volumes',
+                        'id': volid
+                    }
+                }
         
         vm_infos[vmid] = {
             'status': status,
-            'interfaces': interfaces
+            'interfaces': interfaces,
+            'components': components,
         }
     else:
         # a vm is absent, set its status to destroyed

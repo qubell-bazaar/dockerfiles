@@ -17,7 +17,7 @@ for volid in vol_ids:
             'flags': {
                 'active': True,
                 'converging': False,
-                'failed': vol.failure is not None,
+                'failed': bool(vol.failure)
             }
         }
         if vol.failure:
