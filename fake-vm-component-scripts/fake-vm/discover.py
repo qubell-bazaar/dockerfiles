@@ -14,7 +14,7 @@ def get_model(vm):
             'interfaces': {
                 'info': {
                     'signals': {
-                        'vmid': vm.vmid
+                        'vm-id': vm.vmid
                     }
                 }
             }

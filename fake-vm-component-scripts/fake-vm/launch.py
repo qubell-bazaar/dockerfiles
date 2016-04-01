@@ -2,7 +2,6 @@
 
 import yaml
 import sys
-import uuid
 
 import fvm
 
@@ -10,25 +9,13 @@ arguments = yaml.safe_load(sys.stdin)
 
 instances = []
 
-config_keys = {
-    k: k.split('.')[1] for k in {
-        'configuration.name',
-        'configuration.address',
-        'configuration.login',
-        'configuration.failure',
-    }
-}
-
 for (instance_id, params) in arguments.get('launch-instances', {}).items():
-    model = {}
-
     # merge factory and instance configurations
-    joined_config = dict(arguments.get('configuration', {}), **params.get('configuration'))
-    final_config = {
-        config_keys[k]: v for k, v in joined_config.items() if k in config_keys
-    }
+    joined_config = dict(arguments.get('configuration', {}), **params.get('configuration', {}))
+    login = joined_config.get('configuration.login')
 
-    model.update(final_config)
+    model = {}
+    if login: model['login'] = login
 
     instances.append((fvm.FakeVm(None, model), instance_id))
 

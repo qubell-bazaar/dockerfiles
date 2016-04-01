@@ -20,7 +20,7 @@ def get_model(vol):
             'interfaces': {
                 'info': {
                     'signals': {
-                        'volid': vol.volid,
+                        'volume-id': vol.volid,
                         'color': vol.color,
                     }
                 }

@@ -26,14 +26,11 @@ for volid in vol_ids:
         interfaces = {
             'info': {
                 'signals': {
-                    'volid': volid,
+                    'volume-id': volid,
                     'color': vol.color
                 }
             }
         }
-
-        if vol.name:
-            interfaces['info']['signals']['name'] = vol.name
 
         vol_infos[volid] = {
             'status': status,

@@ -14,13 +14,13 @@ SafeRepresenter.add_representer(defaultdict, SafeRepresenter.represent_dict)
 
 arguments = yaml.safe_load(sys.stdin)
 
-ids = list(arguments.get('instances', {}).keys())
+vm_ids = list(arguments.get('instances', {}).keys())
 
 def multidict():
     return defaultdict(multidict)
 
 vm_infos = {}
-for vmid in ids:
+for vmid in vm_ids:
     vm = fvm.load(vmid)
     if vm:
         status = {
@@ -36,7 +36,7 @@ for vmid in ids:
         interfaces = {
             'info': {
                 'signals': {
-                    'vmid': vmid
+                    'vm-id': vmid
                 }
             }
         }
@@ -54,8 +54,8 @@ for vmid in ids:
                 color = vol.color if vol else 'unknown'
                 components[color]['children'][volid] = {
                     'reference': {
-                        'type': 'volumes',
-                        'id': volid
+                        'mapping': 'volumes.volume-by-id',
+                        'key': volid
                     }
                 }
         
