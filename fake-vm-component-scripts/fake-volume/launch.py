@@ -3,7 +3,7 @@
 import yaml
 import sys
 
-import fvm
+import fvol
 
 arguments = yaml.safe_load(sys.stdin)
 
@@ -12,24 +12,25 @@ instances = []
 for (instance_id, params) in arguments.get('launch-instances', {}).items():
     # merge factory and instance configurations
     joined_config = dict(arguments.get('configuration', {}), **params.get('configuration', {}))
-    login = joined_config.get('configuration.login')
+    color = joined_config.get('configuration.color')
 
-    model = {}
-    if login: model['login'] = login
+    if not color:
+        print("No color is specified for volume {}".format(instance_id), file=sys.stderr)
+        sys.exit(1)
 
-    instances.append((fvm.FakeVm(None, model), instance_id))
+    instances.append((fvol.FakeVolume(None, None, color), instance_id))
 
-for (vm, instance_id) in instances:
-    fvm.save(vm)
+for (vol, instance_id) in instances:
+    fvol.save(vol)
 
 result = {
     'instances': {
-        vm.vmid: {
+        vol.volid: {
             'instanceId': instance_id,  # pass instance for correlation
             'status': {
                 'flags': {'active': True, 'converging': False, 'failed': False}
             }
-        } for (vm, instance_id) in instances
+        } for (vol, instance_id) in instances
     }
 }
 

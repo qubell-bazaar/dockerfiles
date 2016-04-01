@@ -3,31 +3,31 @@
 import sys
 import yaml
 
-import fvm
+import fvol
 
 arguments = yaml.safe_load(sys.stdin)
 
-vm_ids = list(arguments.get('instances', {}).keys())
+vol_ids = list(arguments.get('instances', {}).keys())
 
 errors = False
-for vmid in vm_ids:
-    if not fvm.exists(vmid):
-        print("Fake VM {} does not exist".format(vmid), file=sys.stderr)
+for volid in vol_ids:
+    if not fvol.exists(volid):
+        print("Fake Volume {} does not exist".format(volid), file=sys.stderr)
         errors = True
 
 if errors:
     sys.exit(1)
 
-for vmid in vm_ids:
-    fvm.delete(vmid)
+for volid in vol_ids:
+    fvol.delete(volid)
 
 result = {
     'instances': {
-        vmid: {
+        volid: {
             'status': {
                 'flags': {'active': False, 'converging': False, 'failed': False}
             }
-        } for vmid in vm_ids
+        } for volid in vol_ids
     }
 }
 yaml.safe_dump(result, sys.stdout)
