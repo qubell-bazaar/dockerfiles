@@ -52,7 +52,7 @@ for vmid in vm_ids:
             for volid in vm.model['volumes']:
                 vol = fvol.load(volid)
                 color = vol.color if vol else 'unknown'
-                components[color]['children'][volid] = {
+                components[color]['components'][volid] = {
                     'reference': {
                         'mapping': 'volumes.volume-by-id',
                         'key': volid
