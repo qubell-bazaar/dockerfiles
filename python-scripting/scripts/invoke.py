@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python3
 
 import sys, yaml, subprocess
 
@@ -7,9 +7,15 @@ script = stdin['script']
 arguments = stdin['arguments']
 
 process = subprocess.Popen([script], stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-yaml.dump(arguments, process.stdin)
-process.stdin.close()
 
-output = yaml.safe_load(process.stdout)
-stdout = { "results": output }
-yaml.dump(stdout, sys.stdout)
+try:
+    stdout, _ = process.communicate(yaml.safe_dump(arguments), timeout=3600)  # 1 hour
+except subprocess.TimeoutExpired:
+    process.kill()
+
+output = yaml.safe_load(stdout) if stdout is not None else None
+if output:
+    yaml.safe_dump({"results": output}, sys.stdout)
+
+exit_code = process.returncode
+sys.exit(exit_code)
