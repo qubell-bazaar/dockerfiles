@@ -15,7 +15,7 @@ for vmid in ids:
     updates = {}
     for commandid in commandids:
         command = commands.get(commandid, {})
-        delay = command.get('info', {}).get('reboot', {}).get('delay', 0)
+        delay = command.get('control', {}).get('reboot', {}).get('delay', 0)
         time.sleep(delay)
         updates['commands.' + commandid] = [
                 { '$intermediate': True, 'message': "Rebooting" },
