@@ -2,6 +2,7 @@
 
 import sys
 import yaml
+import datetime
 
 import fvm
 import fvol
@@ -64,6 +65,29 @@ for vmid in vm_ids:
             'interfaces': interfaces,
             'components': components,
         }
+
+        entries = []
+        if 'tasks' in vm.model:
+            remaining_tasks = []
+            for task in vm.model['tasks']:
+                if task['timestamp'] <= datetime.datetime.utcnow().timestamp():
+                    entries.append({
+                        'severity': 'INFO',
+                        'message': "Task '{}' executed".format(task['task'])
+                    })
+                else:
+                    remaining_tasks.append(task)
+            if remaining_tasks:
+                vm.model['tasks'] = remaining_tasks
+            else:
+                del vm.model['tasks']
+            fvm.save(vm)
+
+        if entries:
+            vm_infos[vmid]['$pushAll'] = {
+                'activityLog': entries
+            }
+
     else:
         # a vm is absent, set its status to destroyed
         vm_infos[vmid] = {
