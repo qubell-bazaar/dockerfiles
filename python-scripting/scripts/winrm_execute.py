@@ -34,11 +34,11 @@ for ip in ips:
 
     p.cleanup_command(shell_id, command_id)
     p.close_shell(shell_id)
-    results[ip] = {"results": std_out.decode('ascii'), "errors": std_err.decode('ascii')}
+    results[ip] = {"result": std_out.decode('ascii'), "error": std_err.decode('ascii')}
     # some command returned an error and this is first error
     # save it as exit code to let user know that there is some problem
     if status_code > 0 and exit_code == 0:
         exit_code = status_code
 
-yaml.safe_dump(results, sys.stdout)
+yaml.safe_dump({"output": results}, sys.stdout)
 sys.exit(exit_code)
