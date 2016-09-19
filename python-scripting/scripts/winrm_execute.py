@@ -40,5 +40,5 @@ for ip in ips:
     if status_code > 0 and exit_code == 0:
         exit_code = status_code
 
-yaml.safe_dump({"output": results}, sys.stdout)
+yaml.safe_dump({"results": results}, sys.stdout)
 sys.exit(exit_code)
