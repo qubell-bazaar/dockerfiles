@@ -12,6 +12,7 @@ username = data['vmIdentity']
 password = data['vmPassword']
 command = data['powerShellCommand']
 arguments = data.get('powerShellArguments', '')
+winrm_ssl_port = data.get('winRmSslPort', '5986')
 
 encoded_ps = b64encode(command.encode('utf_16_le')).decode('ascii')
 
@@ -22,7 +23,7 @@ exit_code = 0
 
 for ip in ips:
     p = Protocol(
-        endpoint='https://{0}:5986/wsman'.format(ip),
+        endpoint='https://{0}:{1}/wsman'.format(ip, winrm_ssl_port),
         transport='ntlm', # the only authentication we support at the moment
         username=r'{0}\{1}'.format(ips, username),
         password=password,
